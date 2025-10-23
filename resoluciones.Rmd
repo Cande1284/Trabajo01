@@ -16,7 +16,7 @@ library(webshot)
 if(!requireNamespace("knitr", quietly = TRUE)) install.packages("knitr")
 library(knitr)
 
-source("TDecisionCodigo-master/teoriadecision_funciones_incertidumbre.R")
+source("teoriadecision_funciones_incertidumbre.R")
 
 ```
 
@@ -38,12 +38,8 @@ knitr::kable(tabla_beneficios, caption = "Resultados de los criterios - Benefici
 res_hur_03 <- criterio.Hurwicz(beneficios, alfa = 0.3, favorable = TRUE)
 res_hur_07 <- criterio.Hurwicz(beneficios, alfa = 0.7, favorable = TRUE)
 
-dec_hur_03 <- get_decision_names(res_hur_03, beneficios)
-dec_hur_07 <- get_decision_names(res_hur_07, beneficios)
-
 resumen_hur_ben <- data.frame(
   Alpha = c(0.3, 0.7),
-  Decision_optima = c(dec_hur_03, dec_hur_07),
   ValorOptimo = c(res_hur_03$ValorOptimo, res_hur_07$ValorOptimo),
   stringsAsFactors = FALSE
 )
@@ -67,11 +63,10 @@ Los criterios Laplace, Savage y Punto Ideal también favorecen d1.
 En resumen, d1 es la alternativa óptima en todos los criterios aplicados, lo que indica una decisión robusta independientemente del nivel de optimismo o del enfoque adoptado. Lucia debería elegir la estrategia d1 si su objetivo es maximizar beneficios en un entorno incierto.
 
 ```{r}
-maximin(vacaciones)
-maximax(vacaciones)
-laplace(vacaciones)
-hurwicz(vacaciones, alpha = 0.3)
-minimax_regret(vacaciones)
+
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+
+source("teoriadecision_funciones_incertidumbre.R")
 
 vacaciones <- matrix(c(1200, 1200, 1200,
                        800, 1100, 1500,
@@ -80,6 +75,13 @@ vacaciones <- matrix(c(1200, 1200, 1200,
 rownames(vacaciones) <- c("A", "B", "C")
 colnames(vacaciones) <- c("Alta", "Media", "Baja")
 vacaciones
+
+criterio.Optimista(vacaciones)
+criterio.Hurwicz(vacaciones, alfa = 0.3)
+criterio.Laplace(vacaciones)
+criterio.PuntoIdeal(vacaciones)
+criterio.Savage(vacaciones)
+criterio.Wald(vacaciones)
 
 # Mostrar matriz
 knitr::kable(vacaciones, caption = "Matriz de costes - Vacaciones")
@@ -114,7 +116,7 @@ knitr::kable(resumen_hur, caption = "Decisiones óptimas según Hurwicz")
 
 
 ```
-En este problema, Candela evalúa tres alternativas para sus vacaciones (A: agencia, B: por cuenta propia, C: actividades locales) bajo tres escenarios de disponibilidad (Alta, Media, Baja), considerando los costes asociados a cada opción.
+En este problema, Lucia evalúa tres alternativas para sus vacaciones (A: agencia, B: por cuenta propia, C: actividades locales) bajo tres escenarios de disponibilidad (Alta, Media, Baja), considerando los costes asociados a cada opción.
 
 Al aplicar los distintos criterios de decisión bajo incertidumbre, se observa que la alternativa C (actividades locales) es consistentemente la más favorable:
 
@@ -126,4 +128,4 @@ El criterio Hurwicz, tanto con α = 0.3 como con α = 0.7, selecciona C como la 
 
 Los criterios Laplace, Savage y Punto Ideal también favorecen la opción C.
 
-En resumen, si Candela desea minimizar los costes y actuar con prudencia ante la incertidumbre de disponibilidad, la opción C es la más recomendable según todos los criterios aplicados
+En resumen, si Lucia desea minimizar los costes y actuar con prudencia ante la incertidumbre de disponibilidad, la opción C es la más recomendable según todos los criterios aplicados
